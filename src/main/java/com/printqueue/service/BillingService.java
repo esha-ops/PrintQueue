@@ -1,7 +1,15 @@
+
 package com.printqueue.service;
 
 public class BillingService {
-    public double calculateCost(String serviceType, String paperSize, int pages, int copies) {
+
+    public double calculateCost(
+            String serviceType,
+            String paperSize,
+            int pages,
+            int copies,
+            String printMode) {
+
         double rate = switch (serviceType) {
             case "Color Printout" -> 8.0;
             case "Photocopy" -> 2.0;
@@ -14,6 +22,17 @@ public class BillingService {
             rate *= 2;
         }
 
-        return pages * copies * rate;
+        int chargeablePages = pages;
+
+        // Double-sided printing uses two pages per sheet
+        if ("Double-sided".equals(printMode)
+                && (serviceType.equals("Black & White Printout")
+                || serviceType.equals("Color Printout")
+                || serviceType.equals("Photocopy"))) {
+
+            chargeablePages = (pages + 1) / 2;
+        }
+
+        return chargeablePages * copies * rate;
     }
 }

@@ -207,12 +207,12 @@ public class NewJobPanel extends JPanel {
 
     private void calculateCost() {
         double cost = billingService.calculateCost(
-                (String) serviceTypeBox.getSelectedItem(),
-                (String) paperSizeBox.getSelectedItem(),
-                getPages(),
-                getCopies()
+            (String) serviceTypeBox.getSelectedItem(),
+            (String) paperSizeBox.getSelectedItem(),
+            getPages(),
+            getCopies(),
+            (String) printModeBox.getSelectedItem()
         );
-
         costLabel.setText("Estimated Cost: Rs. " + String.format("%.2f", cost));
     }
 
@@ -253,10 +253,11 @@ public class NewJobPanel extends JPanel {
         }
 
         double cost = billingService.calculateCost(
-                (String) serviceTypeBox.getSelectedItem(),
-                (String) paperSizeBox.getSelectedItem(),
-                getPages(),
-                getCopies()
+            (String) serviceTypeBox.getSelectedItem(),
+            (String) paperSizeBox.getSelectedItem(),
+            getPages(),
+            getCopies(),
+            (String) printModeBox.getSelectedItem()
         );
 
         PrintJob job = queueService.submitJob(
