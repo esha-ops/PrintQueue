@@ -117,8 +117,6 @@ public class TrackJobPanel extends JPanel {
 
         trackedToken = token.toUpperCase();
 
-        // Remember the current status so an old completed job
-        // does not trigger a new notification.
         lastKnownStatus = job.getStatus();
 
         refreshStatus();
@@ -138,7 +136,7 @@ public class TrackJobPanel extends JPanel {
 
         String currentStatus = job.getStatus();
 
-        // Notify only when this tracked job changes to Completed.
+        // Notify only when the tracked job changes to Completed.
         if (lastKnownStatus != null
                 && !lastKnownStatus.equals("Completed")
                 && currentStatus.equals("Completed")) {
@@ -206,6 +204,14 @@ public class TrackJobPanel extends JPanel {
         billButton.setEnabled(currentStatus.equals("Completed"));
     }
 
+    // Centre heading text automatically
+    private String centerText(String text, int width) {
+
+        int spaces = Math.max(0, (width - text.length()) / 2);
+
+        return " ".repeat(spaces) + text;
+    }
+
     private void showBill() {
 
         if (trackedToken == null) {
@@ -222,32 +228,34 @@ public class TrackJobPanel extends JPanel {
                 DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm a")
         );
 
+        String line = "----------------------------------------";
+
         String bill =
-                "              PRINTQUEUE\n"
-                + "       SMART XEROX SHOP\n"
-                + "----------------------------------------\n"
-                + "                 INVOICE\n"
-                + "----------------------------------------\n"
+                centerText("PRINTQUEUE", 40) + "\n"
+                + centerText("SMART XEROX SHOP", 40) + "\n"
+                + line + "\n"
+                + centerText("CUSTOMER INVOICE", 40) + "\n"
+                + line + "\n"
                 + "Invoice / Job ID : " + job.getJobId() + "\n"
                 + "Job Token        : " + job.getToken() + "\n"
                 + "Date             : " + date + "\n"
                 + "Customer         : " + job.getCustomerName() + "\n"
                 + "Phone            : " + job.getPhoneNumber() + "\n"
-                + "----------------------------------------\n"
+                + line + "\n"
                 + "Service          : " + job.getServiceType() + "\n"
                 + "Document         : " + job.getDocumentName() + "\n"
                 + "Paper Size       : " + job.getPaperSize() + "\n"
                 + "Pages            : " + job.getPages() + "\n"
                 + "Copies           : " + job.getCopies() + "\n"
                 + "Print Mode       : " + job.getPrintMode() + "\n"
-                + "----------------------------------------\n"
+                + line + "\n"
                 + "TOTAL AMOUNT     : Rs. "
                 + String.format("%.2f", job.getEstimatedCost()) + "\n"
                 + "Payment Status   : To be collected\n"
                 + "Job Status       : " + job.getStatus() + "\n"
-                + "----------------------------------------\n"
-                + "       Thank you for choosing us!\n"
-                + "----------------------------------------\n";
+                + line + "\n"
+                + centerText("Thank you for choosing us!", 40) + "\n"
+                + line + "\n";
 
         JTextArea billArea = new JTextArea(bill);
         billArea.setEditable(false);
