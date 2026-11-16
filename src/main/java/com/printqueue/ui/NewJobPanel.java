@@ -51,7 +51,6 @@ public class NewJobPanel extends JPanel {
     public NewJobPanel(PrintQueueService queueService) {
         this.queueService = queueService;
 
-        // Restrict phone number input
         restrictPhoneInput();
 
         setLayout(new BorderLayout(15, 15));
@@ -63,7 +62,6 @@ public class NewJobPanel extends JPanel {
 
     // Accept only digits and a maximum of 10 characters
     private void restrictPhoneInput() {
-
         AbstractDocument document =
                 (AbstractDocument) phoneNumberField.getDocument();
 
@@ -93,7 +91,6 @@ public class NewJobPanel extends JPanel {
             public void insertString(FilterBypass fb, int offset,
                                      String text, AttributeSet attrs)
                     throws BadLocationException {
-
                 replace(fb, offset, 0, text, attrs);
             }
         });
@@ -125,7 +122,7 @@ public class NewJobPanel extends JPanel {
         form.add(new JLabel("Print Mode:"));
         form.add(printModeBox);
         form.add(calculateButton);
-        form.add(submitButton);
+        form.add(new JLabel(""));
 
         form.add(new JLabel("Upload Document:"));
         form.add(uploadButton);
@@ -137,12 +134,29 @@ public class NewJobPanel extends JPanel {
         form.add(new JLabel(""));
         form.add(clearButton);
 
+        // Make Submit Job prominent and centred below the form
+        submitButton.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        submitButton.setPreferredSize(new Dimension(240, 50));
+        submitButton.setBackground(new Color(25, 118, 210));
+        submitButton.setForeground(Color.WHITE);
+        submitButton.setFocusPainted(false);
+        submitButton.setBorder(BorderFactory.createEmptyBorder(10, 25, 10, 25));
+        submitButton.setOpaque(true);
+        submitButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        JPanel submitPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 15));
+        submitPanel.add(submitButton);
+
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(form, BorderLayout.CENTER);
+        topPanel.add(submitPanel, BorderLayout.SOUTH);
+
         calculateButton.addActionListener(e -> calculateCost());
         uploadButton.addActionListener(e -> uploadDocument());
         submitButton.addActionListener(e -> submitJob());
         clearButton.addActionListener(e -> clearForm());
 
-        return form;
+        return topPanel;
     }
 
     private JPanel createStatusPanel() {
@@ -207,12 +221,13 @@ public class NewJobPanel extends JPanel {
 
     private void calculateCost() {
         double cost = billingService.calculateCost(
-            (String) serviceTypeBox.getSelectedItem(),
-            (String) paperSizeBox.getSelectedItem(),
-            getPages(),
-            getCopies(),
-            (String) printModeBox.getSelectedItem()
+                (String) serviceTypeBox.getSelectedItem(),
+                (String) paperSizeBox.getSelectedItem(),
+                getPages(),
+                getCopies(),
+                (String) printModeBox.getSelectedItem()
         );
+
         costLabel.setText("Estimated Cost: Rs. " + String.format("%.2f", cost));
     }
 
@@ -230,7 +245,6 @@ public class NewJobPanel extends JPanel {
             return;
         }
 
-        // Validate exactly 10 digits
         if (!phone.matches("[0-9]{10}")) {
             JOptionPane.showMessageDialog(
                     this,
@@ -253,11 +267,11 @@ public class NewJobPanel extends JPanel {
         }
 
         double cost = billingService.calculateCost(
-            (String) serviceTypeBox.getSelectedItem(),
-            (String) paperSizeBox.getSelectedItem(),
-            getPages(),
-            getCopies(),
-            (String) printModeBox.getSelectedItem()
+                (String) serviceTypeBox.getSelectedItem(),
+                (String) paperSizeBox.getSelectedItem(),
+                getPages(),
+                getCopies(),
+                (String) printModeBox.getSelectedItem()
         );
 
         PrintJob job = queueService.submitJob(
